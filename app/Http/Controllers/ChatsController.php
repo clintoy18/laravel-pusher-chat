@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Events\MessageSent;
+use App\Events\PrivateMessageSent;
 
 use Illuminate\Http\Request;
 use App\Models\Message;
@@ -26,9 +27,15 @@ class ChatsController extends Controller
             'user_id' => Auth::id(),
             'message' => $request->message,
         ]);
-        $message->load('user');
+         $message->load('user');
         broadcast(new MessageSent($message))->toOthers();
     
         return redirect('/chat');
     }
+    public function userList()
+        {
+            $users = \App\Models\User::where('id', '!=', Auth::id())->get();
+            return view('chat-users', compact('users'));
+        }
+    
 }
